@@ -46,12 +46,13 @@ jobs:
 
       - name: Prepare addon folder
         run: |
-          set -e
           NAME="${{ steps.read_release.outputs.name }}"
           mkdir -p "$NAME"
-          find . -maxdepth 1 -type f \( -name "*.toc" -o -name "*.lua" -o -name "*.xml" -o -name "*.md" \) -print0 | xargs -0 -I{} cp {} "$NAME" || true
-          for d in Libs Wrath Textures Media locales ; do
-            [ -d "$d" ] && cp -r "$d" "$NAME"
+          for f in *.toc *.lua *.xml *.md; do
+            [ -e "$f" ] && cp "$f" "$NAME"/
+          done
+          for d in Libs Wrath Textures Media locales; do
+            [ -d "$d" ] && cp -r "$d" "$NAME"/
           done
 
       - name: Create zip artifact
