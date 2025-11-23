@@ -39,13 +39,25 @@ jobs:
         run: |
           VERSION=$(jq -r '.releases[0].version' release.json)
           FILENAME=$(jq -r '.releases[0].filename' release.json)
+          NAME=$(jq -r '.releases[0].name' release.json)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "filename=$FILENAME" >> "$GITHUB_OUTPUT"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare addon folder
+        run: |
+          set -e
+          NAME="${{ steps.read_release.outputs.name }}"
+          mkdir -p "$NAME"
+          find . -maxdepth 1 -type f \( -name "*.toc" -o -name "*.lua" -o -name "*.xml" -o -name "*.md" \) -print0 | xargs -0 -I{} cp {} "$NAME" || true
+          for d in Libs Wrath Textures Media locales ; do
+            [ -d "$d" ] && cp -r "$d" "$NAME"
+          done
 
       - name: Create zip artifact
         run: |
           echo "Packaging ${{ steps.read_release.outputs.filename }}"
-          zip -r "${{ steps.read_release.outputs.filename }}" Hekili
+          zip -r "${{ steps.read_release.outputs.filename }}" "${{ steps.read_release.outputs.name }}"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
