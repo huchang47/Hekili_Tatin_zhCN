@@ -31,14 +31,34 @@ jobs:
     # "steps" holds a list of all the steps needed to package and release our AddOn
     steps:
 
-      # we first have to clone the AddOn project, this is a required step
-      - name: Clone Project
-        uses: actions/checkout@v1  # note: checkout@v2 breaks git history, so generating a changelog and
-                                   # file naming for non-tagged builds will not work properly
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      # once cloned, we just run the GitHub Action for the packager project
-      - name: Package and Release
+      - name: Read release.json
+        id: read_release
+        run: |
+          VERSION=$(jq -r '.releases[0].version' release.json)
+          FILENAME=$(jq -r '.releases[0].filename' release.json)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "filename=$FILENAME" >> "$GITHUB_OUTPUT"
+
+      - name: Create zip artifact
+        run: |
+          echo "Packaging ${{ steps.read_release.outputs.filename }}"
+          zip -r "${{ steps.read_release.outputs.filename }}" Hekili
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.read_release.outputs.version }}
+          name: ${{ steps.read_release.outputs.version }}
+          files: ${{ steps.read_release.outputs.filename }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Package via BigWigs Packager (optional)
         uses: BigWigsMods/packager@v2
+        continue-on-error: true
 
       # another example where we supply additional arguments, this example is specifically to release
       # for the Classic version of the game
