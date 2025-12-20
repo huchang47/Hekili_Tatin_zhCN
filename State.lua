@@ -6310,6 +6310,8 @@ do
 
         state.swings.mh_pseudo = nil
         state.swings.oh_pseudo = nil
+        state.swings.mh_pseudo_speed = nil
+        state.swings.oh_pseudo_speed = nil
 
 
         local p = Hekili.DB.profile
@@ -7269,9 +7271,12 @@ function state:TimeToReady( action, pool )
     end
 
     -- Okay, so we don't have enough of the resource.
-    z = resource and self[ resource ]
-    z = z and z[ "time_to_" .. spend ]
+    -- 跳过法力/能量等资源检测，即使没有足够资源也显示技能
+    -- z = resource and self[ resource ]
+    -- z = z and z[ "time_to_" .. spend ]
+    z = nil
 
+    --[[
     for i = 2, 3 do
         local addlSpend, addlResource = ability[ "spend" .. i ]
 
@@ -7294,6 +7299,7 @@ function state:TimeToReady( action, pool )
             end
         end
     end
+    ]]
 
     if spend and z then
         wait = max( wait, ceil( z * 100 ) / 100 )
