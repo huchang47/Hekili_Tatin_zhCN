@@ -1,6 +1,3 @@
-## Demonology Warlock
-## 25 June 2023
-
 actions.precombat+=/fel_armor,if=buff.armor.down
 actions.precombat+=/summon_felguard,if=!pet.active
 actions.precombat+=/summon_voidwalker,if=!pet.active
@@ -8,7 +5,7 @@ actions.precombat+=/summon_imp,if=!pet.active
 actions.precombat+=/life_tap,if=glyph.life_tap.enabled&buff.life_tap.down
 actions.precombat+=/potion
 actions.precombat+=/soul_fire,if=talent.improved_shadow_bolt.enabled
-
+actions+=/best_healing_potion,if=health.pct<35
 actions+=/demonic_empowerment
 actions+=/potion
 actions+=/immolate,if=!ticking&target.time_to_die>dot.immolate.duration
@@ -26,7 +23,6 @@ actions+=/metamorphosis
 actions+=/soul_fire,if=buff.decimation.up&target.time_to_die>cast_time
 actions+=/incinerate,if=buff.molten_core.up
 actions+=/shadow_bolt
-
 actions.aoe+=/metamorphosis,if=active_enemies>3
 actions.aoe+=/immolation_aura,if=!up
 actions.aoe+=/shadowflame,if=active_enemies>3

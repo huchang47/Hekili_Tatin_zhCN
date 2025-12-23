@@ -584,6 +584,13 @@ spec:RegisterAuras( {
         alias = { "fel_armor", "demon_armor", "demon_skin" },
         aliasMode = "first",
         aliasType = "buff"
+    },
+
+    -- 法师的灼烧易伤debuff，术士APL可能会检查此debuff是否存在
+    improved_scorch = {
+        id = 22959,
+        duration = 30,
+        max_stack = 1,
     }
 } )
 

@@ -1,48 +1,41 @@
-# DeathKnightBlood: Frost UH Pesti APL
-# https://wowsims.github.io/wotlk/deathknight/#
-# September 2023
-
-## Precombat
-actions.precombat+=/unholy_presence,precombat_seconds=20,if=change_presence
-actions.precombat+=/army_of_the_dead,precombat_seconds=10
-actions.precombat+=/blood_presence,precombat_seconds=6,if=change_presence
-actions.precombat+=/potion_of_speed,precombat_seconds=1
-
-## Default
+﻿actions.precombat+=/blood_presence,if=buff.presence.down
+actions.precombat+=/horn_of_winter,if=buff.horn_of_winter.down
 actions+=/mind_freeze
-# Cast any other cooldowns (i.e., Racials) if they are not specified in this priority.
-actions+=/use_cooldowns
-# Use any trinkets that aren't otherwise specified.
-actions+=/use_items
-# If we haven't used Obliterate 4 times and we're in the first 10 seconds of the fight, process the opener.
-actions+=/call_action_list,strict=1,if=action.obliterate.casts<4&(action.raise_dead.casts<1|cooldown.raise_dead.remains>0)&time<10
+actions+=/best_healing_potion,if=health.pct<35
+actions+=/call_action_list,name=opener,strict=1,if=time<12&action.obliterate.casts<4
 actions+=/icy_touch,if=!dot.frost_fever.ticking
 actions+=/plague_strike,if=!dot.blood_plague.ticking
-actions+=/pestilence,if=dot.frost_fever.ticking&dot.frost_fever.remains<1.5
-actions+=/blood_fury,if=cooldown.unbreakable_armor.ready
-actions+=/hyperspeed_acceleration,if=cooldown.unbreakable_armor.ready
-actions+=/potion_of_speed,if=cooldown.unbreakable_armor.ready
+actions+=/pestilence,if=dot.frost_fever.ticking&dot.frost_fever.remains<5&glyph.disease.enabled&prev_gcd.1.pestilence=0
+actions+=/use_items
+actions+=/potion,if=buff.unbreakable_armor.up|target.time_to_die<30
+actions+=/berserking,if=cooldown.unbreakable_armor.remains<2|buff.unbreakable_armor.up
+actions+=/blood_fury,if=buff.unbreakable_armor.up
+actions+=/hyperspeed_acceleration,if=buff.unbreakable_armor.up
 actions+=/unbreakable_armor
-actions+=/blood_tap,if=prev_off_gcd.1.unbreakable_armor
-actions+=/pestilence,if=dot.frost_fever.ticking&dot.frost_fever.remains<8.5
+actions+=/blood_tap,if=prev_off_gcd.unbreakable_armor
 actions+=/howling_blast,if=buff.freezing_fog.up
-actions+=/obliterate
-actions+=/raise_dead
-actions+=/blood_strike
-actions+=/frost_strike
-
-## Opener
-actions.opener+=/icy_touch,casts=1
-actions.opener+=/plague_strike,casts=1
-actions.opener+=/unbreakable_armor,casts=1
-actions.opener+=/hyperspeed_acceleration,casts=1
-actions.opener+=/blood_fury,casts=1
-actions.opener+=/blood_tap,casts=1
-actions.opener+=/obliterate,casts=1
-actions.opener+=/frost_strike,casts=1
-actions.opener+=/blood_strike,casts=1
-actions.opener+=/empower_rune_weapon,casts=1
-actions.opener+=/obliterate,casts=2
-actions.opener+=/frost_strike,casts=2
-actions.opener+=/obliterate,casts=4
-actions.opener+=/raise_dead,casts=1
+actions+=/obliterate,if=frost_runes.current>=1&unholy_runes.current>=1
+actions+=/obliterate,if=death_runes>=2
+actions+=/obliterate,if=(frost_runes.current>=1|unholy_runes.current>=1)&death_runes>=1
+actions+=/blood_strike,if=blood_runes.current>=1
+actions+=/frost_strike,if=runic_power>=80
+actions+=/frost_strike,if=buff.killing_machine.up
+actions+=/frost_strike,if=runic_power>=40&frost_runes.current=0&unholy_runes.current=0
+actions+=/raise_dead,if=!pet.ghoul.active
+actions+=/empower_rune_weapon,if=frost_runes.current=0&unholy_runes.current=0&blood_runes.current=0&runic_power<30
+actions+=/horn_of_winter,if=runic_power<80
+actions.opener+=/icy_touch,if=!dot.frost_fever.ticking
+actions.opener+=/plague_strike,if=!dot.blood_plague.ticking
+actions.opener+=/unbreakable_armor
+actions.opener+=/blood_tap
+actions.opener+=/use_items
+actions.opener+=/berserking
+actions.opener+=/blood_fury
+actions.opener+=/obliterate
+actions.opener+=/frost_strike,if=buff.killing_machine.up|runic_power>=80
+actions.opener+=/blood_strike
+actions.opener+=/empower_rune_weapon
+actions.opener+=/obliterate
+actions.opener+=/obliterate
+actions.opener+=/frost_strike
+actions.opener+=/raise_dead

@@ -1,12 +1,3 @@
-## Shaman: Enhancement - 增强萨满优化版
-## 泰坦时空特别版 - 优化手法
-## ========================================
-## 双火/风火 单体: 漩涡武器 > 闪电箭 > 风暴打击 > 烈焰震击(DOT保持) > 大地震击 > 闪电之盾 > 火焰新星 > 熔岩猛击
-## 双火/风火 2-3目标: 漩涡武器 > 闪电链 > 火焰新星 > 漩涡武器 > 闪电箭 > 风暴打击 > 烈焰震击(DOT保持) > 大地震击 > 闪电之盾 > 熔岩猛击
-## 双火/风火 3目标以上: 火焰新星 > 漩涡武器 > 闪电链 > 漩涡武器 > 闪电箭 > 风暴打击 > 烈焰震击(DOT保持) > 大地震击 > 闪电之盾 > 熔岩猛击
-## ========================================
-## 双手 单体: 熔岩猛击(熔岩强击) > 烈焰震击(DOT保持) > 熔岩爆裂 > 漩涡武器 > 闪电箭 > 风暴打击 > 大地震击 > 闪电之盾 > 火焰新星
-## ========================================
 actions.precombat+=/windfury_weapon,if=!mainhand_imbued&!mainhand_has_spellpower
 actions.precombat+=/flametongue_weapon,rank=action.flametongue_weapon.max_rank-1,if=!mainhand_imbued&mainhand_has_spellpower
 actions.precombat+=/flametongue_weapon,if=!offhand_imbued

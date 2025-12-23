@@ -1,30 +1,18 @@
-# Priest: Shadow
-# wowsims.github.io & wowhead.com/wotlk
-# November 2023
-
-## Precombat
 actions.precombat+=/shadowform,if=buff.shadowform.down
 actions.precombat+=/divine_spirit,if=buff.divine_spirit.down&buff.prayer_of_spirit.down
 actions.precombat+=/power_word_fortitude,if=buff.power_word_fortitude.down&buff.prayer_of_fortitude.down
 actions.precombat+=/inner_fire,if=buff.inner_fire.stacks<10
 actions.precombat+=/vampiric_embrace,if=!up
 actions.precombat+=/potion
-
-## Default
 actions+=/call_action_list,name=init
+actions+=/best_healing_potion,if=health.pct<35
 actions+=/use_items
 actions+=/potion
-# having shadowform in rotation bugs out
-#actions+=/shadowform,if=!buff.shadowform.up
 actions+=/hyperspeed_acceleration,use_off_gcd=1
 actions+=/run_action_list,name=cleave,if=active_enemies>1
 actions+=/run_action_list,name=single
-
-## Init Parameters
 actions.init+=/variable,name=time_to_die,value=(debuff.training_dummy.up&300)|target.time_to_die
 actions.init+=/variable,name=execute_phase,value=target.health.pct<20
-
-## Cleave
 actions.cleave+=/mind_sear,if=active_enemies>=8
 actions.cleave+=/devouring_plague,if=!dot.devouring_plague.remains
 actions.cleave+=/mind_flay,cycle_targets=1,max_cycle_targets=7,interrupt_if=!buff.inner_focus.up&ticks>=2,if=!moving&(dot.shadow_word_pain.remains<1.5&dot.shadow_word_pain.remains>=action.mind_flay.tick_time+latency)
@@ -39,8 +27,6 @@ actions.cleave+=/mind_flay,interrupt_if=!buff.inner_focus.up&ticks>=2,if=variabl
 actions.cleave+=/shadow_word_death,if=moving
 actions.cleave+=/devouring_plague,if=moving
 actions.cleave+=/dispersion,if=mana.percent<=60
-
-## Single
 actions.single+=/devouring_plague,if=variable.time_to_die<=action.mind_flay.duration|(moving&!dot.devouring_plague.remains)
 actions.single+=/mind_flay,if=buff.inner_focus.up|(dot.shadow_word_pain.remains<1.5&dot.shadow_word_pain.remains>=action.mind_flay.tick_time+latency)
 actions.single+=/shadowfiend,if=variable.time_to_die>0

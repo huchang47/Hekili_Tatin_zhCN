@@ -217,6 +217,7 @@ all:RegisterAbilities( {
             if equipped[ 50726 ] then return 50726 end
             return 50354
         end,
+        toggle = "cooldowns",
     },
 
     corroded_skeleton_key = {
@@ -225,6 +226,7 @@ all:RegisterAbilities( {
         gcd = "off",
 
         item = 50356,
+        toggle = "defensives",
 
         handler = function()
             applyBuff( "hardened_skin" )
@@ -249,6 +251,7 @@ all:RegisterAbilities( {
             if equipped[ 50362 ] then return 50362 end
             return 50363
         end,
+        toggle = "cooldowns",
 
         handler = function()
             applyBuff( "deathbringers_will" )
@@ -269,6 +272,7 @@ all:RegisterAbilities( {
             if equipped[ 47115 ] then return 47115 end
             return 47131
         end,
+        toggle = "cooldowns",
 
         handler = function()
             if stat.strength >= stat.agility then 
@@ -293,7 +297,7 @@ all:RegisterAbilities( {
             if equipped[ 47303 ] then return 47303 end
             return 47464
         end,
-
+        toggle = "cooldowns",
 
         handler = function()
             if stat.strength >= stat.agility then 
@@ -887,5 +891,152 @@ all:RegisterAbilities( {
     -- Phase 2
 
     -- Phase 1
+
+    -- 补充缺失的ICC饰品 by Kiro
+    dislodged_foreign_object = {
+        cast = 0,
+        cooldown = 45,
+        gcd = "off",
+        unlisted = true,
+
+        items = { 50348, 50353 },
+        item = function()
+            if equipped[ 50348 ] then return 50348 end
+            return 50353
+        end,
+        toggle = "cooldowns",
+
+        handler = function()
+            applyBuff( "surge_of_power" )
+        end,
+
+        auras = {
+            surge_of_power = {
+                id = 71644,
+                duration = 20,
+                max_stack = 10,
+                copy = 71601
+            }
+        }
+    },
+
+    phylactery_of_the_nameless_lich = {
+        cast = 0,
+        cooldown = 100,
+        gcd = "off",
+        unlisted = true,
+
+        items = { 50365, 50360 },
+        item = function()
+            if equipped[ 50365 ] then return 50365 end
+            return 50360
+        end,
+        toggle = "cooldowns",
+
+        handler = function()
+            applyBuff( "siphoned_power" )
+        end,
+
+        auras = {
+            siphoned_power = {
+                id = 71636,
+                duration = 20,
+                max_stack = 1,
+                copy = 71605
+            }
+        }
+    },
+
+    herkuml_war_token = {
+        cast = 0,
+        cooldown = 10,
+        gcd = "off",
+        unlisted = true,
+
+        item = 50355,
+        toggle = "cooldowns",
+
+        handler = function()
+            applyBuff( "rage_of_the_fallen" )
+        end,
+
+        auras = {
+            rage_of_the_fallen = {
+                id = 71396,
+                duration = 20,
+                max_stack = 20
+            }
+        }
+    },
+
+    muradins_spyglass = {
+        cast = 0,
+        cooldown = 10,
+        gcd = "off",
+        unlisted = true,
+
+        items = { 50345, 50340 },
+        item = function()
+            if equipped[ 50345 ] then return 50345 end
+            return 50340
+        end,
+        toggle = "cooldowns",
+
+        handler = function()
+            applyBuff( "cultivated_power" )
+        end,
+
+        auras = {
+            cultivated_power = {
+                id = 71572,
+                duration = 10,
+                max_stack = 10,
+                copy = 71570
+            }
+        }
+    },
+
+    purified_lunar_dust = {
+        cast = 0,
+        cooldown = 50,
+        gcd = "off",
+
+        item = 50358,
+        toggle = "cooldowns",
+
+        handler = function()
+            applyBuff( "revitalized" )
+        end,
+
+        auras = {
+            revitalized = {
+                id = 71584,
+                duration = 15,
+                max_stack = 1
+            }
+        }
+    },
+
+    needle_encrusted_scorpion = {
+        cast = 0,
+        cooldown = 50,
+        gcd = "off",
+        unlisted = true,
+
+        item = 50198,
+        toggle = "cooldowns",
+
+        handler = function()
+            applyBuff( "fatal_flaws" )
+        end,
+
+        auras = {
+            fatal_flaws = {
+                id = 71403,
+                duration = 10,
+                max_stack = 1
+            }
+        }
+    },
 
 } )

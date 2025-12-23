@@ -1,53 +1,37 @@
-# DeathKnightBlood: Blood Pesti APL
-# https://wowsims.github.io/wotlk/deathknight/#
-# September 2023
-
-## Precombat
-actions.precombat+=/unholy_presence,precombat_seconds=20,if=change_presence
-actions.precombat+=/army_of_the_dead,precombat_seconds=10
-actions.precombat+=/blood_presence,precombat_seconds=6,if=change_presence
-# TODO: Check requirements re: overwriting other HoWs.
-actions.precombat+=/horn_of_winter,precombat_seconds=1.5,if=refreshable
-actions.precombat+=/potion_of_speed,precombat_seconds=1
-actions.precombat+=/unholy_frenzy
-actions.precombat+=/hyperspeed_acceleration
-# Or other racials?
-actions.precombat+=/berserking
-
-## Default
+﻿actions.precombat+=/blood_presence,if=buff.presence.down
+actions.precombat+=/horn_of_winter,if=buff.horn_of_winter.down
 actions+=/mind_freeze
-# Cast any other cooldowns (Racials) if they are not specified in this priority.
-actions+=/other_cooldowns
-# Use any trinkets that aren't otherwise specified.
-actions+=/use_items
-# If we haven't used Heart Strike 4 times and we're in the first 10 seconds of the fight, process the opener.
-actions+=/call_action_list,strict=1,if=action.heart_strike.casts<4&time<10
+actions+=/best_healing_potion,if=health.pct<35
+actions+=/call_action_list,name=opener,strict=1,if=time<15&action.heart_strike.casts<6
 actions+=/icy_touch,if=!dot.frost_fever.ticking
 actions+=/plague_strike,if=!dot.blood_plague.ticking
-actions+=/pestilence,if=dot.frost_fever.ticking&dot.frost_fever.remains<1.5
-actions+=/unholy_frenzy,if=cooldown.dancing_rune_weapon.ready
-actions+=/berserking,if=cooldown.dancing_rune_weapon.ready
-actions+=/hyperspeed_acceleration,if=cooldown.dancing_rune_weapon.ready
-actions+=/potion_of_speed,if=cooldown.dancing_rune_weapon.ready&(buff.unholy_frenzy.up|boss&cooldown.unholy_frenzy.remains>fight_remains)
-actions+=/raise_dead,if=cooldown.dancing_rune_weapon.ready
-actions+=/dancing_rune_weapon
-actions+=/pestilence,if=blood_runes.time_to_1>dot.frost_fever.remains
-actions+=/heart_strike
-actions+=/death_strike
-actions+=/death_coil,if=!cooldown.dancing_rune_weapon.ready
-actions+=/horn_of_winter
-
-## Opener
-actions.opener+=/icy_touch,casts=1
-actions.opener+=/plague_strike,casts=1
-actions.opener+=/death_strike,casts=1
-actions.opener+=/heart_strike,casts=2
-actions.opener+=/raise_dead,casts=1
-actions.opener+=/empower_rune_weapon,casts=1
-actions.opener+=/dancing_rune_weapon,casts=1
-actions.opener+=/death_strike,casts=2
-actions.opener+=/heart_strike,casts=3
-## Wait 1.5 seconds... ?
-actions.opener+=/blood_tap,casts=1
-actions.opener+=/heart_strike,casts=4
-
+actions+=/pestilence,if=dot.frost_fever.ticking&dot.blood_plague.ticking&(dot.frost_fever.remains<3|dot.blood_plague.remains<3)&glyph.disease.enabled&prev_gcd.1.pestilence=0
+actions+=/use_items
+actions+=/potion,if=buff.dancing_rune_weapon.up|target.time_to_die<30
+actions+=/unholy_frenzy,if=cooldown.dancing_rune_weapon.remains<3|buff.dancing_rune_weapon.up
+actions+=/berserking,if=buff.dancing_rune_weapon.up
+actions+=/blood_fury,if=buff.dancing_rune_weapon.up
+actions+=/hyperspeed_acceleration,if=buff.dancing_rune_weapon.up
+actions+=/dancing_rune_weapon,if=runic_power>=60
+actions+=/heart_strike,if=blood_runes.current>=1
+actions+=/death_strike,if=frost_runes.current>=1&unholy_runes.current>=1
+actions+=/death_strike,if=death_runes>=2
+actions+=/death_coil,if=runic_power>=80
+actions+=/death_coil,if=buff.dancing_rune_weapon.up&runic_power>=40
+actions+=/death_coil,if=!buff.dancing_rune_weapon.up&runic_power>=60
+actions+=/blood_tap,if=blood_runes.current=0&(frost_runes.current=0|unholy_runes.current=0)
+actions+=/empower_rune_weapon,if=blood_runes.current=0&frost_runes.current=0&unholy_runes.current=0&runic_power<30
+actions+=/horn_of_winter,if=runic_power<80
+actions.opener+=/icy_touch,if=!dot.frost_fever.ticking
+actions.opener+=/plague_strike,if=!dot.blood_plague.ticking
+actions.opener+=/heart_strike
+actions.opener+=/heart_strike
+actions.opener+=/dancing_rune_weapon,if=runic_power>=60
+actions.opener+=/unholy_frenzy
+actions.opener+=/use_items
+actions.opener+=/death_strike
+actions.opener+=/empower_rune_weapon,if=blood_runes.current=0
+actions.opener+=/heart_strike
+actions.opener+=/heart_strike
+actions.opener+=/blood_tap
+actions.opener+=/heart_strike

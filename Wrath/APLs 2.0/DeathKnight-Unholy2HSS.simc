@@ -1,32 +1,29 @@
-# DeathKnightBlood: Unholy 2H SS APL
-# https://wowsims.github.io/wotlk/deathknight/#
-# September 2023
-
-## Precombat
-actions.precombat+=/unholy_presence,precombat_seconds=10,if=change_presence
-actions.precombat+=/ghoul_frenzy,precombat_seconds=8
-actions.precombat+=/horn_of_winter,precombat_seconds=1.5
-actions.precombat+=/potion_of_speed,precombat_seconds=1
-
-## Default
+﻿actions.precombat+=/unholy_presence,if=buff.presence.down
+actions.precombat+=/horn_of_winter,if=buff.horn_of_winter.down
+actions.precombat+=/raise_dead,if=!pet.ghoul.active
 actions+=/mind_freeze
-# Cast any other cooldowns (i.e., Racials) if they are not specified in this priority.
-actions+=/use_cooldowns
-# Use any trinkets that aren't otherwise specified.
-actions+=/use_items
-actions+=/icy_touch,if=dot.frost_fever.remains<3
-actions+=/plague_strike,if=dot.blood_plague.remains<3
+actions+=/best_healing_potion,if=health.pct<35
+actions+=/icy_touch,if=!dot.frost_fever.ticking
+actions+=/plague_strike,if=!dot.blood_plague.ticking
+actions+=/icy_touch,if=dot.frost_fever.remains<3&dot.frost_fever.ticking
+actions+=/plague_strike,if=dot.blood_plague.remains<3&dot.blood_plague.ticking
 actions+=/blood_strike,if=buff.desolation.down
+actions+=/use_items,if=cooldown.summon_gargoyle.remains<5|buff.summon_gargoyle.up
+actions+=/potion,if=buff.summon_gargoyle.up|target.time_to_die<30
 actions+=/berserking,if=buff.summon_gargoyle.up
-actions+=/hyperspeed_acceleration,if=buff.summon_gargoyle.up|cooldown.summon_gargoyle.remains>50
-actions+=/potion_of_speed,if=buff.summon_gargoyle.up|boss&cooldown.summon_gargoyle.remains>fight_remains
-actions+=/army_of_the_dead,if=buff.summon_gargoyle.up
-actions+=/blood_tap,if=buff.ghoul_frenzy.down&!blood_runes.left_ready
-actions+=/ghoul_frenzy,if=blood_runes.left_death&buff.ghoul_frenzy.down&unholy_runes.all_death
-actions+=/scourge_strike
-actions+=/blood_strike
-actions+=/empower_rune_weapon,if=buff.summon_gargoyle.up
-actions+=/summon_gargoyle
-actions+=/death_coil,if=cooldown.summon_gargoyle.remains
-actions+=/blood_presence,if=change_presence&buff.unholy_presence.up&cooldown.summon_gargoyle.remains>0&buff.summon_gargoyle.down
-actions+=/horn_of_winter
+actions+=/blood_fury,if=buff.summon_gargoyle.up
+actions+=/hyperspeed_acceleration,if=buff.summon_gargoyle.up|cooldown.summon_gargoyle.remains>60
+actions+=/summon_gargoyle,if=runic_power>=60
+actions+=/blood_tap,if=buff.ghoul_frenzy.down&blood_runes.current=0&pet.ghoul.active
+actions+=/ghoul_frenzy,if=pet.ghoul.active&buff.ghoul_frenzy.down&(blood_runes.current>=1|prev_off_gcd.blood_tap)
+actions+=/scourge_strike,if=frost_runes.current>=1&unholy_runes.current>=1
+actions+=/scourge_strike,if=death_runes>=2
+actions+=/scourge_strike,if=(frost_runes.current>=1|unholy_runes.current>=1)&death_runes>=1
+actions+=/blood_strike,if=blood_runes.current>=1&buff.desolation.remains<10
+actions+=/death_coil,if=buff.summon_gargoyle.up&runic_power>=40
+actions+=/death_coil,if=runic_power>=80
+actions+=/death_coil,if=runic_power>=60&frost_runes.current=0&unholy_runes.current=0
+actions+=/raise_dead,if=!pet.ghoul.active
+actions+=/empower_rune_weapon,if=buff.summon_gargoyle.up&frost_runes.current=0&unholy_runes.current=0&blood_runes.current=0
+actions+=/army_of_the_dead,if=buff.summon_gargoyle.up&buff.summon_gargoyle.remains>6
+actions+=/horn_of_winter,if=runic_power<80
