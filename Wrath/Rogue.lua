@@ -1466,6 +1466,20 @@ spec:RegisterAbilities( {
         copy = { 1856, 1857, 26889 },
 
     },
+
+    -- 自动攻击 - 后备技能
+    auto_attack = {
+        id = 6603,
+        cast = 0,
+        cooldown = 0,
+        gcd = "off",
+
+        startsCombat = true,
+        texture = 135641,
+
+        handler = function()
+        end
+    },
 } )
 
 spec:RegisterSetting("rogue_description", nil, {
@@ -1541,4 +1555,23 @@ spec:RegisterPackSelector( "subtlety", nil, "|T132320:0|t 敏锐",
     "如果你在|T132320:0|t敏锐天赋中投入的点数多于其他天赋，将会为你自动选择该优先级。",
     function( tab1, tab2, tab3 )
         return tab3 > max( tab1, tab2 )
+    end )
+
+
+spec:RegisterPackSelector( "assassination_pvp", nil, "|T132292:0|t 刺杀PVP",
+    "PVP专用刺杀天赋优先级，适用于战场和竞技场。",
+    function( tab1, tab2, tab3 )
+        return false
+    end )
+
+spec:RegisterPackSelector( "combat_pvp", nil, "|T132090:0|t 战斗PVP",
+    "PVP专用战斗天赋优先级，适用于战场和竞技场。",
+    function( tab1, tab2, tab3 )
+        return false
+    end )
+
+spec:RegisterPackSelector( "subtlety_pvp", nil, "|T132320:0|t 敏锐PVP",
+    "PVP专用敏锐天赋优先级，适用于战场和竞技场。",
+    function( tab1, tab2, tab3 )
+        return false
     end )

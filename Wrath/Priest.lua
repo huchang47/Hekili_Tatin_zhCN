@@ -525,6 +525,12 @@ spec:RegisterAuras( {
         tick_time = function() return 3 * ( buff.shadowform.up and spell_haste or 1 ) end,
         copy = { 34914, 34916, 34917, 48159, 48160 },
     },
+    -- Cannot be shielded by Power Word: Shield.
+    weakened_soul = {
+        id = 6788,
+        duration = 15,
+        max_stack = 1,
+    },
 } )
 
 -- Glyphs
@@ -1743,6 +1749,20 @@ spec:RegisterAbilities( {
         copy = { 34914, 34916, 34917, 48159, 48160 }, --添加高等级技能，by风雪 20250731
 
     },
+
+    -- 自动攻击 - 后备技能（牧师用惩击代替）
+    auto_attack = {
+        id = 6603,
+        cast = 0,
+        cooldown = 0,
+        gcd = "off",
+
+        startsCombat = true,
+        texture = 135641,
+
+        handler = function()
+        end
+    },
 } )
 
 -- Hooks
@@ -1752,11 +1772,11 @@ end )
 -- Expressions
 spec:RegisterStateExpr( "flay_over_blast", function()
     local currentSP = GetSpellBonusDamage( 6 ) or 0
-    local vttimer = select( 4, GetSpellInfo( 48160 ) ) / 1000
+    local vttimer = select( 4, GetSpellInfo( 48160 ) ) or 1500
+    vttimer = vttimer / 1000
     local currHaste = ( ( 1.5 / vttimer ) - 1 ) * 100
+    local latency = select( 4, GetNetStats() ) / 1000
     
-    Hekili:Debug( "flay_over_blast()["..tostring( rtn ).."]: currentSP["..tostring( currentSP ).."], currHaste["..tostring( currHaste ).."], latency["..tostring( latency ).."] )" )
-
     if set_bonus.tier10_4pc then
         -- Linelo maffs for 4pc T10 with 10ms MF clip delays
         if (currHaste > 102.68 and currentSP > 1500) or (currentSP > 5493.3 and currHaste < 50) or
@@ -1765,7 +1785,6 @@ spec:RegisterStateExpr( "flay_over_blast", function()
         end
     else
         --Linelo maffs w/o 4pc T10
-        local latency = select(4, GetNetStats()) / 1000
         if currentSP >= (-1.0038e-02*latency^2 + 1.7241e-03*latency + 1.1564e-04)*currHaste^4 
         +  (4.928100*latency^2 - 0.908961*latency - 0.063893)*currHaste^3
         +  (-878.800*latency^2 + 177.068*latency + 13.641)*currHaste^2
@@ -1803,8 +1822,7 @@ spec:RegisterOptions( {
 
 
 -- Packs
-spec:RegisterPack( "暗影", 20231124, [[Hekili:vN1wVTTnu4FlbfWWg1vXxAU0bR8W2EynpemaTNLeTeDmr0nirfpdeOF77qsDHsIK2UnDffOOjrMN7NZ35JYUlD)hxNqef7(0QfRwVC5QVyT8(f3S4wxh6XmSRtgk4f0ZWVKGIH)3zpkm9a7XhJsrHmXlslZdGp6q6HcsCH1Ze6(YTwK0k)jv(Wt3JrHwbPXxFiLg9IRZ2sse9RjUBvz6pV6lGkZWbUpDJRZEsyiwCsCrqJ5R8)7CcUGw5NLtsZj0Jv(re2FVlnVY)VWVqIiUoShvW9qsYZry43EIhV4e02iCO7V76eacJZjixNxrWpGhBrjXypAQxibx5VXUYhfqjPjwXKKqVDrOJwHL5i2JQ8F7Tk)Pv(XPVcwGhUxv5hMsTcXVczf4HEzrONlXw54yejPOYFMRJqHSqQ)HCPqQqRdUTC3olssco3BxAqzHvzwRdWmzbp14Dinp0ldSvNj3u5V06gU7z(GpOkAPKGx8yjLk)pcPzOGLeCSxC0EwwaS(cZWpu5VOtvcFBhbNeYu2N1QmipZCSM0(u()4POMWdJyffRck0ax5drMidOXlGp)o4aZAtPg0f7WRnOSnT6A2WiRlRZcVB0gES60RO4msoja0BzW(UQKCvamvaQGwxFmgER78L(AM5j3AkrBQH2C38DxAZG9W4bQeSolV0xH((Tri2qoRcXlp54SiCcPyFmoH2RFF94guUWmN6EZJy67F6uO0yitJFzGgla0lhZzT(LA9WfmaOfwR6m9beHhflxOYO1yb6AD(u789GtiL0NDI(q5XUrGfb7rqQjQ5Zn5lSiB6z4pAaDAZd6H0VQUnPUArYXCmtJtjlxmQkdYXnKEOzWqxKIBdwC82CuGq96boVQzdJkixWlHJLxMr9i7GZQynXewjR4b7vC7OhtDOrKHScXikhPyPEqRHYRcryPEKMyucYkddCjsOI2JBLYzHeGuqEb73z1Dq57qLruvl1Bejaff5j(dpgxabJapbrgsIO)HxvBKOSa7bUtCHS(AwQ1COSuXp7DIHzvgDLCsM4K7rc(b1B3sZJR8ja9H8uAnrITLpdJePL0oZS)ilEZW4qigcWrybPdHtMUBN3ZbHSy34EeMYEf7HtWXaHj(22LDMiVmrB(jicaaXQ2nCosxZ4IxPYYXa5VTiJ1QUuZGC3taYF8wmqRJXsudAntol4NjNbfQqcumWEfSjqkxi(Kl)ZYYrhHbN0DYFSCpOKOMj7iux6bqB85hWdPeAziwRf7Fc52TXkXm3OHGE8vy18a1cVPVhIJUzg862tnFqBBOmscFu7kacC)auVcmk3Cz(7IYYWsQce3GJqS4rr5pJH7xaHZfHbd4C)RxFv4CNs4(gcq)uy3BSd7BGk)W(RrTtcUOksUNkF9dHRSbCVrm5)g85FrU(YP508Rhj)3xwHdP()otkCij)lm3EnS1S51siHPOcMDTgywd8Rplxq24Vl8x1J7FE8x1VZ(S4VAG(8fXFLZ)uXYW0m2v5OY9fISm73IaNGFhpmpnrZHzbM)fwghFSPnE9IfTibc0h5cexH1S0KFSInQN2vQv)EmkIU3klGYNlxTq2i4)fhusXEz7rfcgHGgFTov08Q)(m7cD5Sybqk)ACgq0bhYX8e2w8(9kSQEKXNmDhH5eFO59a(Bv(1VyWh)a)noEoVhs(z7ZUS6r4HCTwZyT6rH5lSAjX(r7R74CoNSZwfnu1Y1J(yROJ5Jorpxu1kwffXw9RLe6qZmGIQsl1b(1Q)ren3SCHAHhIWXuXvqtRMyIx3RRi)P42EThfoWWB3nN1UzZgRKpv7n6KFyJUbfFbxndoFNk63dC1WMaPOcoSMRYnx6MC2lLfyWvReHMGanZC9XVF40IkUowtY8RSCK)FJYHpcWU6snwSShVqjMZfclHsmNp3Bpvh(Zea7z2BVng15eMOhgrTrgHTSz1IMi4p4PIoLksnGABxDPinzFVcbgIXZRMgFLCAmkBz28Eu(SxoFenq77MlVVZ246oUViwknzQjU9BGlamX0bEWw40Qi()XAcYZuezsC4zoJQf(pSqHC9PJFEPLD26jY34JBAjwmrPVyVwBq0Luox35QAg6tMovlBA7B04i3DdmhOxoWtvk4gqUzAu5svz6owVAlq2DjTPdOz)2B6PyVzTQoI(laUAmt6lX51Sq4surVb(te(xVAsZ40qObv9nDJ1x2i7Pkc1(Wj6u5ewzQt7PvbDP)WT0p5htIQ6g7BBXvDQ3t0iUyVHgBPS)DmqtZ3wkmouN8nIVotH1LQe9jDuN(bv))j8yRFDHWJdKtcr6NjAJc)Ba897o0SX2QZC7B)MJF8iGT2tQ1Ba9)HflfcZ(wRAYN6IXn2lSwnVahy8uNq5Q)s7MmQpV7lSBI(A8g7P1cQ7RPRDkH73t1RQpDcfziJ)DTZzCV9fVZrfC0fTyyeWVsabTa)gNA0FyJa)WD7lP7tZDDCkHhNuwuWVGU7)n]] )
-
+spec:RegisterPack( "暗影(黑科研)", 202512251, [[Hekili:vJ1wVrTXx8pl8ckrv4Uxixkkjp03kpevj3NT9S2ZMDe(MgpEdReYkTrq3avvjQ9pPxOPKhGqHuL2IAvGgGpm)JxN8TONzS3D9612zxARQqcrCM5C)YVZzIsvLprr2aXWkRwRsT5QwR2Cs1QxBHklQiZ64IvKDr63aTg8HnYc()EF3UHV6xN58)CNOd2j6HF9SCk6y6Gm4sYZXNQduPi3WNyY(iBLgzfpqKlwxzv4JweddCmjypDf5pMsWESRfOj3cz4SEG2vc0I1x0wheEC3tp5Bc)I7hTv3GR375)s4p84E7(hr)0lJ26fHDFg)yodXe1BR7175)pGUhEC4B2m81pn6lpceC42hF2(BC(HNC6lU3zh84aTvGZ(2dJ(0Fp6(plA3Bloau5zpzJEp4ORfT73loj63ED0J2789(5Od3lMN3SjWZ5p4ZJ6EhfztIhZt4(e71mXWxRkIRyBudtSHYhQiRtjmmLGuKBJGFahlXiwyvMJQbbhOT0YbAiDgXXwYIyBO20e1rYWNI4hfODRBfOntGMLtBqdbAxoq7sbAgomjdCBiKdhQ6AIwZhlrXwiITxGgKyIfip6okrkmiDuOb2WVztjITnMQ20r33tY3DGbWvPNi5OUUd1q1f01qvUuGwvP5eMx5eUsEElJOFdvEqjq79c0mHIgB9oJ4hdOL7a1NYimK1QmuuX2wtc22GlSRwOWG4m3W6h2Nr8priQV7Hr8KIKhdAuc0aplocuGva3VaqWSdcPLiloX1lrylnqwZM1Zgg15U3Cf6E88uBKLlHs0b56R3AywkDwauLoYJLKFk19Qp0wgvYClz(Yc0LvqxE18ctBXWYz9hitWRSuDAd19nmH7IZqI0df7AITjETSW2SrQ3RpEbQGzUrTy5Tyfx)muGPAd5s8dYirpaivU8O2OP6IHl4aqvKQnu1RJicVOAL8uAcwqrLoxzq)Dgksf0N9cQdt32ngyHEleeAm7FFz2c3ZMzcSNcaDgehkgs)sjLjjzlcflWmlTlPALXYYaFcfvm0CFfnWjWwnOi9PuDz5wOubCkXgue13LPsAcAlNjbxMNv8wz5A5HkpQLgpSkTNW1tXiT9PppGmdmIjWpQwmuww(ZdNOAX4pwiBKKlgwFXMfx0mFQyMbb2AH6X)MlgbEtoD9J4SmUn0e5BYYBJG(CRJmnvJ)fv(IeXRtOgVTfXoU4R4sIwyKjRLKRolgpkf4rdyzkv(9IyGdlX4RN2299WQGOS8YKNUAAIs4Dukejco7onBQUMUb3dhWrRo8OLlgBaUMo2ehVitgruCYGlN2yvSn2cwjum8oL0P(2fgX0nb80CNjmjCNSaNi35sX6ownq5M9YflVPd1sc(P9y7zaxmblDzqGkySQhV7KjeKORwCNlf1b6dDAM(601NPyT81JIfNZ6G0e9wGXXimFdCHACuksxxmUqkFBQSWKIHEjBowiGyXT8LGhwoC38xu5nlP3lNuVJlFgilTcIrD5Fzc4mIHJyHHXOWmiE7NHVLvN(W01RuzWgGmeDnmlnGTqGj1JPpoN6Nl2useFguIAvsRe8nX6(mSQBlKxsTFsxuPf(J1JcqMlMbv0dJOLx4)3ATVSf55nsQd4lQXHbpbg1unKZcDt1rfH8c5oNR)sK)N8cPs75ElEou2oUXALI3NpNG7ffV(x59g5mkjVLieVg6TWMFh5jGx8gGV79qP)z3So7ZNMObjtH2YDX6SpFAkJ4VpGw3)p4tkKM8aFRxa4B8lxMkyV8asNo7oTfN9nafpnyYEdqX72mrVbyKDBlE5D4G2jR8N6pE56ikFGoGr0R72H39hdp6KWB)OtF5DM70JFAV7UXzB(QWU7E2(p5)VXNfCDqp(Swouf5WVANWT3NVvPttcFaTqdk)1d]] )
 
 spec:RegisterPackSelector( "discipline", "none", "|T135987:0|t 暗影",
     "如果你在|T135987:0|t戒律天赋中投入的点数多于其他天赋，将会为你自动选择该优先级。",
@@ -1861,3 +1879,10 @@ spec:RegisterSetting( "min_shadowfiend_mana", 25, {
     max = 100,
     step = 1,
 } )
+
+
+spec:RegisterPackSelector( "shadow_pvp", nil, "|T136207:0|t 暗影PVP",
+    "PVP专用暗影天赋优先级，适用于战场和竞技场。",
+    function( tab1, tab2, tab3 )
+        return false
+    end )

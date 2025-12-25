@@ -1889,7 +1889,27 @@ spec:RegisterAbilities( {
             summonPet( "water_elemental", spec.auras.water_elemental.duration )
             applyBuff( "water_elemental" )
         end,
-    }
+    },
+
+    -- 冻结 - 水元素宠物技能，冻结目标
+    -- PVP 控制技能
+    freeze = {
+        id = 33395,
+        cast = 0,
+        cooldown = 25,
+        gcd = "off",
+
+        startsCombat = true,
+        texture = 135848,
+
+        usable = function()
+            return pet.water_elemental.active, "requires active water elemental"
+        end,
+
+        handler = function()
+            applyDebuff( "target", "frost_nova" )
+        end,
+    },
 } )
 
 
@@ -1979,3 +1999,22 @@ spec:RegisterPack( "奥术 Wowhead", 20230924, [[Hekili:9EvBVTTnq4FlffWjfRw2X5TL
 spec:RegisterPack( "火焰(黑科研)", 20250820, [[Hekili:DEvtVnory4FlCH2kKSAs6xGaKGlOUcLd4UIBE8y7jXJQ9mUZmUHShSkArIpoSIkT329asCyflibCzVSc(ZS0nQ)l49DCs84M4KcQsnPZ8opVFmpVpVtd6fCwGFc1Wcg2F)(hU)j933RxVd2VxVaFZ0cwGFbn(C6y4lcAo87zF9Vo7B(JDV91xp7fxp7NE6EOftZK0eejTSufdwf4hvYZmNkcIAb)XdaC1fS4GHNe4NYtsy1MW0Xb(V95)2n)9lN9KFF2t)ZAhCZp8mWhZ(Lx92V)Q3C1pE7p)KBF2lFZvxFZ39Q)5VEEvydOfk5iEM11xYuAUu46YjuLGlgRd8)Yp5lgE6Wp7dQcRcplLvfYZlKktv4iPQkCNe2iAzMzNQqf7IsUILufQL5GD0sJmhYeyH4uQymt7v9GpNlGTocq7HcDzbIeAan2abaa3OmOOrIPf7agx9GtZxyXGgJY4AdIvGp4IuPkWVond8T7GL1(N1BF4ZH9w8ltGptqJYyjbFAGFSIBykonWF3ewu5OrEz8lH0LejZJ8uSCkxORc)yisRcX0CnwLiNi2Rk8DRc31UxrPof30KYiz8CUPfo7gt1gIHJfM3ldQkI4PWPDbiLrniaLfwSRD8kBvwyps9YsdrBum65ZpbIiuvS1Pa)rWTrenlds(H9xFHyHPftvYOmieDRn3txxwaGAqkPLjSHYEPMrMKcKocwnaurJwgdcUrjHAReVdT2khnImooXAvtyb(bHWqvJzgcxtGUS5z4sSILLcWCOXbsFNqaSBaA3AkbwB1ggnd5rcigtCxKelLzyvgX4GoWiNRusfHNB7)Dc55N7WURlU5AtwKhvQN)9wGvtB2o39(WERPyxustGCuXADndjcpMKqXeIWfXWfUgTypx2zZrx69pSk84THY8qaXzdw5MqhwBD9npYmZmPEfXgR)gC0Eyj(ixAapEk5sgC87Wbo21OLso3XOtCnQqw)zllE)oOb49jCBLRR1Pv8I61FOgLfftHuqXfNZmqAzsPq8tvmXoWNsq9qnHJ2HI(8rCwIh6kRCMRVAbmqpMgVSNqBjr50VI0EvFhcqD(UiGD2WLPnVqJQweJKKWz2RHE9TxTDWQSrBp3OnYHrdYrK6)GGI1UEdx(sgHjy5Cw9fE)AjDs9KuQ02O3RdTSwvKzF7JN94xGb49Z52uPPFdf1CDTtNigbd22yLv1i3w3qtRZUlM05Tqa3BndpAP03iFJr3bBwRFRLHvNKDNQHD6k6Pd7ObydJtUZCJH9oQdmWKNSci5sKTzp4XDDqfmbP(0YSwhEC20IuVL77T4WiANSHWWoe1bN65DfkgslOlN41jz0NvaQbrmL99xdAaNQIPWKMifplJtfXTgAOO8KgwZkMUSzRFhr(8tWHbHzzS4wvI3bEU29a(v2Fjyl9ExJtZHAptqOQC8bA3Hfuk4xuYQ30BBdvhjJlHH8yxtRltLCEx1CHJePXZX2QWpQkC)6Rku5ynxsl8GLLrMqVKTg1VjCd0nut47QuBhHa0A(5SvYvKaPbSG1M3hn)TfNSPYxIIowk0Wfc8(R0UdR(lRCnjd)rpIQsApRY0sdR7NOTaLu4FLbF(elbKkIzzmfTz2MZBv6(PL)FEh5AF669uS9)e(Tem7qVCJkxRhj333TQas77J6Fc(3p]] )
 
 spec:RegisterPack( "冰霜 Wowhead", 20230930, [[Hekili:fJ1FpsTnq0plOkT3Du2S)4G7a0DivkQTGApv1qf9VsI3Kj76Eo2bBNBzpDkF27yNnjoztwOuHQqcYAp(nppEM5ztWIG3h4Nq0qWnlNV885V485ElE6Y5p95b(6D5qGFoj(wYA8dojd)7Fsku6YOpi2UbijMP3Xe4himkrHmgnzJwNRE5SzB3U1BBLDEXISzBfA2TZwxqtGzXmIsbQzzi0Zsnyoljxnvk0envWNgleSeXwUAkzfLr1uqnn)oe8vfuM(T8Gvdt7lrAKdXb3G8FdnjbQSeuXb()g6RxwgvTdENllPX7MEhq5QwEo1YqACf5MA45uddrsCuww(oFixdzRazzKHByisksPmK7FxzuxoGd8nJgi29ys57WrXH)DjG4VIGeGeBaq5Lxp03F9mImMWHWvskJrj8y4j00RLeAYKvfPPEhmTNX1hfkkxdmgeRni9OphuDMRzPhXlXc(FxiHWmcNeUgYmEP(7W4ne5AqD1YHxBMGPbEirMjKM1z9DbN(XcOAWJ4xvrwMGhUftdLHadYaUMWS7XCq7zwYDWK1SD5B8a0goHvzShWjRyqYWWMkIlu4Mznn2G1APOiFsfyHjcTNZ8xpFyiY3jfRWehBaFLqPQp6FdKskyTh82OxbgJLyvdJ5oUDaLgWDeJINeXjx3ouyDkxfS)yDcOlazuPuidPMC2oapEy7ljwHiG1jH26e3b3NWKl2I57oJNYW(wHXKC3bZfMVEsHccfPPHRXn3IUbfwsOItYn0YyvZavzNnmOkJToA4mUeYi4)(QlMBlf)tfugr47kJ0sk)wqRWV2GLGrejWpb)xHEdi3sn2z6GrtPqINlNm0GI1ZQwaFda5MMjaCp(lTOmcRfW4l(JDyZ4YitoaAaLVgpHrFKw36jQQUa9fndtiWiNOqXq6TLQ3GKAVDRWYdCzY9)mLkXL8ACWomlbPryQLfM41PjGniHTSUh4Ef5p8q1VRObgXdTDZ8uAuB56fNn50kS8sRDsOXXEuEykJUEJ(HhCnO7CN15WUE(MA5dCkwmHPByoNNdTBpbDgS(m8QymkgQPzWJpY(4aA0SpA4YkS1hVfC0E3fTIrV)EImXy((YDGdzyZ8xTCYJYe3HUTBok3K9AtnhCnAZjS2ZCIs5lMp5qi2xZaFkNjuMcIVoyQ2P19BQMV7YwoVZofW4PTd9NRo0mrtB9owv3K3lpwF1LDGhUteBfg7yZ5ZhmrjW)o8SehT9Meb(BjsoUhub(F4h(JBE7n)mkzxg9(nyYpnlxiXAIutrXjjv9tpPmscFSaddjyfLWu)rk0ImSbwITudtyuyjZVInslJwS8LMwMC0X25pzF(4FDsvnCZVR79HJF6IpDMNPl(BT(3SSLOtS7hSmNQ0g8d8r3Urid8)f4w8Mab(2zS3XRIP4N3yVZx1sd8DB)h4V3HbVoqJXdJDTJ0SKwzad(wPb3bB0gmyCURVCve65RN2ZxXsSvNKsc8Fuz0rKfCy1GYkgSFMlhA6q3Jax4AKRwsp7U01UgTLEg9CJroPRMyEZIQY57TIxm6(VJ6tz0KYObuGSJpUkuz0RkJUyU7P(Ean(EX8Eo3CDzjnVY0VsLRwF1OBz91IrsQC67oeb(FuPZ9W40YO(IBLrp8W(ZKregIUgR5lJoZEiDADv7OIDvaoUGhIKns2V8SLLJj8zjWHIFnxXQts0acHLrxHgulgwg94JUVDktAA2A495hN3hks2dOMqMfTXBC0viZwcS0UfXokvAuTaxR9AH8z)7HSNgPDS((WvV26Nl(24N(I6wFD5O(AVC(bOV0PDrRaVfSJ2ERV4EVgDlgVtxTuTnn7sh3lHCmNLQ2yX9axBKQ63cBeup3b1MRjybOJOOZTdCjV28w(9VYQriDGEzh8U2ED0o4)HGw2AECCBt(HFG8qAZD0l)sa5G57(s7d2mnt3OQpA029D32O(YofbDER(X1(h(14oxOW517nk9JfvAFtUDV)F8sfJx8AFWU1f7lJ79ODREGBXv7unxWy4Ob(qENRru)g)G2)e8pd]] )
+
+
+spec:RegisterPackSelector( "arcane_pvp", nil, "|T135932:0|t 奥术PVP",
+    "PVP专用奥术天赋优先级，适用于战场和竞技场。",
+    function( tab1, tab2, tab3 )
+        return false
+    end )
+
+spec:RegisterPackSelector( "fire_pvp", nil, "|T135810:0|t 火焰PVP",
+    "PVP专用火焰天赋优先级，适用于战场和竞技场。",
+    function( tab1, tab2, tab3 )
+        return false
+    end )
+
+spec:RegisterPackSelector( "frost_pvp", nil, "|T135846:0|t 冰霜PVP",
+    "PVP专用冰霜天赋优先级，适用于战场和竞技场。",
+    function( tab1, tab2, tab3 )
+        return false
+    end )

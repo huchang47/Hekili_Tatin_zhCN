@@ -2318,9 +2318,9 @@ do
 
                 Hekili.frameStartTime = start
 
-                local ok, err = coroutine.resume( thread )
+                local ok, err = pcall( coroutine.resume, thread )
                 if not ok then
-                    err = err .. "\n\n" .. debugstack( thread )
+                    err = tostring( err ) .. "\n\n" .. debugstack( thread )
                     Hekili:Error( "Update: " .. err )
                     pcall( error, err )
                 end

@@ -1039,4 +1039,172 @@ all:RegisterAbilities( {
         }
     },
 
+    -- 治疗药水 - 通用技能，用于低血量时使用治疗药水
+    -- WotLK 最佳治疗药水: 无尽治疗药水 (Endless Healing Potion) 或 符文治疗药水 (Runic Healing Potion)
+    best_healing_potion = {
+        name = "治疗药水",
+        cast = 0,
+        cooldown = 60,  -- 药水共享 CD
+        gcd = "off",
+
+        -- 符文治疗药水 ID: 33447, 无尽治疗药水 ID: 43569
+        items = { 33447, 43569, 22829, 13446 },
+        item = function()
+            -- 按优先级检查背包中的治疗药水
+            if GetItemCount( 33447 ) > 0 then return 33447 end  -- 符文治疗药水
+            if GetItemCount( 43569 ) > 0 then return 43569 end  -- 无尽治疗药水
+            if GetItemCount( 22829 ) > 0 then return 22829 end  -- 超强治疗药水
+            if GetItemCount( 13446 ) > 0 then return 13446 end  -- 强效治疗药水
+            return 33447  -- 默认返回符文治疗药水
+        end,
+
+        toggle = "potions",
+
+        usable = function()
+            -- 只在低血量时可用
+            return health.pct < 50, "health must be below 50%"
+        end,
+
+        handler = function()
+            -- 治疗效果由游戏处理
+        end,
+    },
+
+    -- 治疗药水别名 - 与 best_healing_potion 相同
+    health_potion = {
+        name = "治疗药水",
+        cast = 0,
+        cooldown = 60,
+        gcd = "off",
+
+        items = { 33447, 43569, 22829, 13446 },
+        item = function()
+            if GetItemCount( 33447 ) > 0 then return 33447 end
+            if GetItemCount( 43569 ) > 0 then return 43569 end
+            if GetItemCount( 22829 ) > 0 then return 22829 end
+            if GetItemCount( 13446 ) > 0 then return 13446 end
+            return 33447
+        end,
+
+        toggle = "potions",
+
+        usable = function()
+            return health.pct < 50, "health must be below 50%"
+        end,
+
+        handler = function()
+        end,
+    },
+
+    -- 治疗石 - 术士制造的治疗物品，所有职业可用
+    -- WotLK 治疗石 ID: 36892 (大师治疗石), 36891 (高级治疗石), 36890 (治疗石)
+    healthstone = {
+        name = "治疗石",
+        cast = 0,
+        cooldown = 120,  -- 治疗石有独立 CD
+        gcd = "off",
+
+        items = { 36892, 36891, 36890, 36889, 5512 },
+        item = function()
+            -- 按优先级检查背包中的治疗石
+            if GetItemCount( 36892 ) > 0 then return 36892 end  -- 大师治疗石
+            if GetItemCount( 36891 ) > 0 then return 36891 end  -- 高级治疗石
+            if GetItemCount( 36890 ) > 0 then return 36890 end  -- 治疗石
+            if GetItemCount( 36889 ) > 0 then return 36889 end  -- 次级治疗石
+            if GetItemCount( 5512 ) > 0 then return 5512 end    -- 初级治疗石
+            return 36892  -- 默认返回大师治疗石
+        end,
+
+        toggle = "defensives",
+
+        usable = function()
+            -- 检查是否有治疗石
+            local hasStone = GetItemCount( 36892 ) > 0 or GetItemCount( 36891 ) > 0 or 
+                            GetItemCount( 36890 ) > 0 or GetItemCount( 36889 ) > 0 or 
+                            GetItemCount( 5512 ) > 0
+            if not hasStone then return false, "no healthstone in bags" end
+            return health.pct < 50, "health must be below 50%"
+        end,
+
+        handler = function()
+            -- 治疗效果由游戏处理
+        end,
+    },
+
+    -- 通用药水 - 根据职业自动选择最佳药水
+    potion = {
+        name = "药水",
+        cast = 0,
+        cooldown = 60,
+        gcd = "off",
+
+        items = { 33447, 43569, 22829, 13446, 40211, 40212 },
+        item = function()
+            -- 对于物理职业，优先使用治疗药水
+            -- 对于法系职业，可能需要法力药水
+            if GetItemCount( 33447 ) > 0 then return 33447 end  -- 符文治疗药水
+            if GetItemCount( 43569 ) > 0 then return 43569 end  -- 无尽治疗药水
+            if GetItemCount( 22829 ) > 0 then return 22829 end  -- 超强治疗药水
+            if GetItemCount( 40211 ) > 0 then return 40211 end  -- 药剂 (速度)
+            if GetItemCount( 40212 ) > 0 then return 40212 end  -- 药剂 (野性)
+            return 33447
+        end,
+
+        toggle = "potions",
+
+        handler = function()
+        end,
+    },
+
+    -- 使用物品 - 通用物品使用（饰品等）
+    -- 这是一个占位符，实际使用时会根据装备的饰品来触发
+    use_items = {
+        name = "使用物品",
+        cast = 0,
+        cooldown = 0,
+        gcd = "off",
+
+        usable = function()
+            -- 检查是否有可用的饰品
+            return false, "use specific trinket abilities instead"
+        end,
+
+        handler = function()
+            -- 由具体饰品技能处理
+        end,
+    },
+
+    -- 法力药水 - 通用技能，用于低蓝量时使用法力药水
+    -- WotLK 最佳法力药水: 符文法力药水 (Runic Mana Potion)
+    best_mana_potion = {
+        name = "法力药水",
+        link = "|cff00ccff[法力药水]|r",
+        texture = 136243,  -- 法力药水图标
+        cast = 0,
+        cooldown = 60,  -- 药水共享 CD
+        gcd = "off",
+
+        -- 符文法力药水 ID: 33448, 超强法力药水 ID: 22832
+        items = { 33448, 22832, 13444, 13443 },
+        item = function()
+            -- 按优先级检查背包中的法力药水
+            if GetItemCount( 33448 ) > 0 then return 33448 end  -- 符文法力药水
+            if GetItemCount( 22832 ) > 0 then return 22832 end  -- 超强法力药水
+            if GetItemCount( 13444 ) > 0 then return 13444 end  -- 强效法力药水
+            if GetItemCount( 13443 ) > 0 then return 13443 end  -- 高级法力药水
+            return 33448  -- 默认返回符文法力药水
+        end,
+
+        toggle = "potions",
+
+        usable = function()
+            -- 只在低蓝量时可用
+            return mana.pct < 50, "mana must be below 50%"
+        end,
+
+        handler = function()
+            -- 法力恢复效果由游戏处理
+        end,
+    },
+
 } )
