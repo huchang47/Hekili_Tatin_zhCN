@@ -1778,7 +1778,7 @@ spec:RegisterAbilities( {
         usable = function() return target.distance < 10, "requires melee range" end,
 
         handler = function ()
-            removeBuff( "mongoose_bite_usable" )
+            --removeBuff( "mongoose_bite_usable" )--移除 buff 关联（错误的依赖）
         end,
 
         copy = { 14269, 14270, 14271, 36916, 53339 },
@@ -2301,7 +2301,8 @@ spec:RegisterAbilities( {
     wing_clip = {
         id = 2974,
         cast = 0,
-        cooldown = 1.5,
+        --cooldown = 1.5,    --泰坦时光版本，摔绊CD=0
+		cooldown = 0,
         gcd = "spell",
 
         spend = function() return mod_beast_within( mod_resourcefulness_cost( 0.06 ) ) * ( 1 - 0.02 * talent.efficiency.rank ) end,

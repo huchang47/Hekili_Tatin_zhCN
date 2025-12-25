@@ -2710,6 +2710,7 @@ spec:RegisterPack( "元素(黑科研)", 202512251, [[Hekili:TAvZUTTrq4NLEPi9qf0V
 
 
 
+
 spec:RegisterPackSelector( "elemental", "元素(黑科研)", "|T136048:0|t 元素",
     "如果你在|T136048:0|t元素天赋中投入的点数多于其他天赋，将会为你自动选择该优先级。",
     function( tab1, tab2, tab3 )
