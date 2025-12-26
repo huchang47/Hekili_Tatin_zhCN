@@ -9,10 +9,6 @@ on:
   push:
     tags:
       - "v*"
-  workflow_dispatch:
-
-permissions:
-  contents: write
 
 # a workflow is built up as jobs, and within these jobs are steps
 jobs:
@@ -34,100 +30,14 @@ jobs:
     # "steps" holds a list of all the steps needed to package and release our AddOn
     steps:
 
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          persist-credentials: true
+      # we first have to clone the AddOn project, this is a required step
+      - name: Clone Project
+        uses: actions/checkout@v1  # note: checkout@v2 breaks git history, so generating a changelog and
+                                   # file naming for non-tagged builds will not work properly
 
-      - name: Ensure tools
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y jq zip
-
-      - name: Read release.json
-        id: read_release
-        run: |
-          VERSION=$(jq -r '.releases[0].version' release.json)
-          FILENAME=$(jq -r '.releases[0].filename' release.json)
-          NAME=$(jq -r '.releases[0].name' release.json)
-          FLAVOR=$(jq -r '.releases[0].metadata[0].flavor // ""' release.json)
-          BASENAME=${FILENAME%.zip}
-          if [ -n "$FLAVOR" ]; then
-            FILENAME_FLAVOR="${BASENAME}-${FLAVOR}.zip"
-          else
-            FILENAME_FLAVOR="$FILENAME"
-          fi
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "filename=$FILENAME" >> "$GITHUB_OUTPUT"
-          echo "name=$NAME" >> "$GITHUB_OUTPUT"
-          echo "flavor=$FLAVOR" >> "$GITHUB_OUTPUT"
-          echo "filename_flavor=$FILENAME_FLAVOR" >> "$GITHUB_OUTPUT"
-
-      - name: Prepare addon folder
-        run: |
-          set +e
-          shopt -s nullglob
-          NAME="${{ steps.read_release.outputs.name }}"
-          mkdir -p "$NAME"
-          for f in *.toc *.lua *.xml *.md; do
-            if [ -e "$f" ]; then
-              cp "$f" "$NAME"/
-            fi
-          done
-          for d in Libs Wrath Textures Media locales; do
-            if [ -d "$d" ]; then
-              cp -r "$d" "$NAME"/
-            fi
-          done
-
-      - name: Verify addon folder
-        run: |
-          NAME="${{ steps.read_release.outputs.name }}"
-          echo "Listing $NAME contents:"
-          ls -al "$NAME" || true
-
-      - name: Create zip artifact
-        run: |
-          echo "Packaging ${{ steps.read_release.outputs.filename_flavor }}"
-          zip -r "${{ steps.read_release.outputs.filename_flavor }}" "${{ steps.read_release.outputs.name }}"
-
-      - name: Ensure tag exists
-        run: |
-          set +e
-          VERSION="${{ steps.read_release.outputs.version }}"
-          if [ -z "$VERSION" ]; then
-            echo "version is empty" >&2
-            exit 1
-          fi
-          git fetch --tags --prune origin
-          if git ls-remote --tags origin | grep -q "refs/tags/${VERSION}$"; then
-            echo "Remote tag $VERSION exists; skipping push."
-            if ! git rev-parse -q --verify "refs/tags/$VERSION" >/dev/null; then
-              echo "Creating local tag $VERSION to match remote for tooling compatibility."
-              # create lightweight local tag at current commit to satisfy tools; release uses remote tag
-              git tag "$VERSION" "$GITHUB_SHA" || true
-            fi
-          else
-            echo "Creating and pushing tag $VERSION at $GITHUB_SHA"
-            git config user.name "github-actions"
-            git config user.email "github-actions@users.noreply.github.com"
-            git tag "$VERSION" "$GITHUB_SHA"
-            git push origin "refs/tags/$VERSION" || true
-          fi
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.read_release.outputs.version }}
-          name: ${{ steps.read_release.outputs.version }}
-          files: ${{ steps.read_release.outputs.filename_flavor }}
-          fail_on_unmatched_files: false
-          generate_release_notes: true
-          make_latest: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Disabled: BigWigs Packager to avoid duplicate non-titan zip assets
+      # once cloned, we just run the GitHub Action for the packager project
+      - name: Package and Release
+        uses: BigWigsMods/packager@v2
 
       # another example where we supply additional arguments, this example is specifically to release
       # for the Classic version of the game
