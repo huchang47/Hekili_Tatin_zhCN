@@ -558,7 +558,7 @@ spec:RegisterAuras( {
         duration = function() return glyph.serpent_sting.enabled and 21 or 15 end,
         tick_time = 3,
         max_stack = 1,
-        copy = { 1978, 13549, 13550, 13551, 13552, 13553, 13554, 13555, 25295, 27016, 49000, 49001, "serpent_stin" },
+        copy = { 1978, 13549, 13550, 13551, 13552, 13553, 13554, 13555, 25295, 27016, 49000, 49001 },
     },
     -- Silenced.
     silencing_shot = {
@@ -841,6 +841,7 @@ spec:RegisterStateExpr("pet_health_pct", function()
 end)
 
 
+
 local finish_raptor = setfenv( function()
     spend( class.abilities.raptor_strike.spends[ spells.raptor_strike ], "mana" )
 end, state )
@@ -850,10 +851,10 @@ spec:RegisterStateFunction( "start_raptor", function()
     state:QueueAuraExpiration( "raptor_strike", finish_raptor, buff.finish_raptor.expires )
 end )
 
+-- 移除猫鼬撕咬的 buff 触发逻辑，猫鼬撕咬只需要近战范围和闪避触发 by 风雪 20251225
 spec:RegisterHook( "reset_precast", function()
     if repeating > 0 then applyBuff( "auto_shot" ) end
 
-    if IsUsableSpell( class.abilities.mongoose_bite.id ) and last_dodge > 0 and now - last_dodge < 5 then applyBuff( "mongoose_bite_usable", last_dodge + 5 - now ) end
     if IsUsableSpell( class.abilities.counterattack.id ) and last_parry > 0 and now - last_parry < 5 then applyBuff( "counterattack_usable", last_parry + 5 - now ) end
 
     if IsCurrentSpell( class.abilities.raptor_strike.id ) then
@@ -1759,12 +1760,11 @@ spec:RegisterAbilities( {
         startsCombat = true,
         texture = 132215,
 
-        buff = "mongoose_bite_usable",
-
+        -- 移除错误的buff依赖，猫鼬撕咬只需要近战范围和闪避触发 by 哑吡 20251225
         usable = function() return target.distance < 10, "requires melee range" end,
 
         handler = function ()
-            removeBuff( "mongoose_bite_usable" )
+            --removeBuff( "mongoose_bite_usable" )--移除 buff 关联（错误的依赖）
         end,
 
         copy = { 14269, 14270, 14271, 36916, 53339 },
@@ -2287,7 +2287,8 @@ spec:RegisterAbilities( {
     wing_clip = {
         id = 2974,
         cast = 0,
-        cooldown = 1.5,
+        --cooldown = 1.5,    --泰坦时光版本，摔绊CD=0
+		cooldown = 0,
         gcd = "spell",
 
         spend = function() return mod_beast_within( mod_resourcefulness_cost( 0.06 ) ) * ( 1 - 0.02 * talent.efficiency.rank ) end,
@@ -2405,6 +2406,7 @@ spec:RegisterPack( "生存(黑科研)", 20251223, [[Hekili:vJv3pTTYs8)wkpurKUnkj
 spec:RegisterPack( "射击(黑科研)", 20251203, [[Hekili:nAvSooUnq0VLTX4Ugbl51B2aC7wKQCbiBJsxqefn5ylctrkqszFg4GQcqQpG8bKU0M(775WH8xKHu2ROCKTVgBjXHV5ndN5nSiT4xkY5uhu8s28SLPzzlsYYsNNUOi3DObkYBOST0n4dkAn(7x(NF)l)XNFZ)(5p91)(tF9V(Z36T4Gut5EKS6wddTQiFvRq6EVQy1y4NJ4ABawXl4dvcoh6nbSSI8FMA2ARPkBLOPRSQv5atxzJrOnc3HUY1A81Fe2kKIICPW6SEFs1a(3lHibu0vsGx8df5mCpGrqX4GA2aUK9cxLqTC2XxDIAG40eUa6kF(P05ismNqRqu(qJuBf7W1n0Mchs(ZaV)rsTENqTX)HtBTUv6e2kTBccWrgtvSG76kx2vo7UJaKF8)xM7D2IB5SBH8jCrp0v6zggjGcQfG1BX9X(7vMVtlLWbV)V)m)FYcwfMYmuYncVNFAPhLL368iY(arp9zyv761jwW0akhX6qIMyGAQqHS)DDLlITE8Py8H4iaqcHu26UEHs)wtO(cuhrVM4QaYordy69JveYXihEiWHarNY62MW6mTwY17vjXzUHy55UYy(6ak)qFYDIkUbw6rmap2Pqtq3XWWmGw2Yb4gtlUHUrRQO73ovb2)7OryjR0wBWl3n(CPVR0sQXEvmohCy8ctvfn4KaoyJLGtwlmqIpGgWzyHRxffqHrLYtX4EHKFgwNVShXhcAghnOrFSJ)vpGw8DXw0Abc6YA7zg9ySrvOsPbt4aNqzmqIN1tG73hVfuetEStAKryj8fp4p2z4lOTjVwgCz9m2bgQB0VUn0Sxt)az8xZVuhdkWQacJxKNf4vAm7hlfmoaYInKI2XN0Slxe(MOoNOYKH(guJlD58UYp(XBz50zN3(T2Do2UHy5s9WgSfgZAwBicVFuIWWOy(CQmXLRXTGR)W22UzdyDKHjtOw2vMxL(WTX0lFSbhRG)1lBnHOY7E6AQkHDfC3OwMyLSZc1hpja7MEcJwXAT9X3nhYmtc7aPNJpoFw0aVXcw)6Y00h(nuPA2DJf36hjWH1uCK930fiINYU8cZwxevm0Qi9pt83vP)glK(Br5VZYeI8xCRxDyBmWw3jb(RKMVgZAmatxVI66ZpdVEkdDZbmJoYdGSdfh97j6oG7PgLVkSi)91nAJd4DL33Nq1OSw4YDjD)KNa61cz4kL0wxL2Gp5bT4)c]] )
 
 spec:RegisterPack( "野兽控制", 20230211, [[Hekili:fs1YUTnmqWpMCPfTr2YjTnPajhYHced0CrbO3O0kPvseMIuGKYQ(c)27sjeBkzB0l6b5SdN9Xqwm7Dwsjyr2BBwV5U1BIJJw)W3Em(owI9qhYs6GIDqn9HeAPNVGGX6Y(n9e1hCzFAqnyZlIQR)Sh7bHck9CAu96ccFJ12z(5QvhHrFzf7wviaJ526EEjAwL7j922joVTPxsVxXsY75c7Rsw(LLiDiDyb7nsQn8YsCciAkyjV3WnUSonxP5wsL()Ybdw6YusxMTbDzhvKl7pAW24YgvtelrWnwZyHbRGEHL(8TXcfuy5kjDUCbkl4Y6utJYYsqjKlWs2lmljspYtRKuqsa1CWtxEFvvubLNuSr9DNyKlT8woLL()S(C6QKOgKNIBQwzsBb9oFC3hktn0XltR4ACHe)wiQcqisvvPurjDGlkxG97HyZrs6GiDWxWwa8hHa3XjsluTTGCjHpeIRtn9EgIhdr0BWuk3BnlafV(SZ7cnJ44)x3ySxyIMxwnOUdL20Xnh556DvlORrB0a32WLKQosc(3oHYW3JPwQtmYYDHAULgT4xsZ3F1ZYhkXhkXwosZ0p7Y2CIW9kHapmsXSomOlajEXYZSUlz)GYdxah9BNgP2zoCUza8Uq7htqLAOwjBGHDlPGizpnQ6JXBK3eVEnP9bql9nawYRTDkT1Br34YMi3LnAfJCB9cqvr2owYn34YwCl0w)AXXUSFH56EWFVK)Qc3w32jImrh1)xEA11uCaEc1CtE4oHM1VYRE6mFDi4qh6iyAqlC)tM0WvxAkd3BMjmCJqtx46tMSWvoAQol8L56mNqqYgyBcHpFM3JFH9ie8rdq4ItdX(iNpS)8MqubJ0ZuB4em0BBuAAe7Jl6hhcz)l]] )
+spec:RegisterPack( "射击(练级)", 20251203, [[Hekili:vE1YoUTnu0VLSXyg0avBn2Utbg7ffOandqNnk7kQKOLOTigjsbsk7yGbAtlq)u62UU57ji)g9ssllkA9ifbi2J4H333ZroCr4hddsrsC4l(Z9xTWF(sVfpo33FDyG8CjomOeL8k6a8fkQa()V8p)5x(RpF3x)8F81)9VVxD85CgkvzgbRINaqcd2vrYLFGgURJTx4VeavItcF5HWGmsAk2ablscd(ve)vrbIkYiL1XzvujMxhxYjmorEUoEpd(ZFb)kjNegKtesHYNigg(4fDAGPOD540WFkmibUdMtqqsG4hWsVtezgHUA2L)uskWrswukbxhVDZI5GLsKegfSYNkZzcYr4CoQmucbVJXnFnQGDKqpOEqZvlQYLergtcF1C4lZ7jwsHGhrt0EUoEvD8S3DbUuvzMWztzUgJbMTowfzqMGP4ccwOqSSnCpYYZXNTJvW)lD8Fd4KmOKXrrM0BWGy7MvkRSAQ(HfEiqBEiEx1(9EcmVetLrcjH6XXficfc9NQJFqNt92cT7G23xvtLQrS9iO503OsZT4v0iZ3JutxtuOxnq59bZSzKzzrnD2Za0OvVHdildlKnZk68r(TLrwgOKJtyf7qst9r0BPPnonMXdP2ELrS9rYmC0rsjMB6dcIUUa9O16cJUp2h6Qs95jmwEk7e1ZESQTxVTo2UFkXO0ZMjVrRMklQnpqJG8a3LaJbAR5Bvx7gwPC0bgndD61(2(UPtrer7ycH2lVR7yRHYsevaezqE26q7d6BfR1jA7aSoK0O9eo2tLqw9ZRhm(kM2kjO88MC8ejp1XwUhRS4AnH6faLSl0Hx9aG4hSrujWrGlleoGE0gugOHWHcoofgftW5qVUh7(J2xby4ZVqZ0beSIpyJ)cXHAHxOZ0ri6toNaeQMZfQH(Gc0NI6(0GfdtN8YIf2HBxIXUrSVnqeGlTxydp1DN1QI1Cr7IcW4Vy18643EBkK9tCE)366yxCT5YqlTCyNLqXcHodx2PqWtquCVvIHhQfyPP7kQoCad8yT60kQTHvVxSEABQ4loaISWhgEQEyrEAZy0i6BPDxNDeBQlNu9XXjVty0KkHj)MuYDwo(ioxfJpoFML8FxgQFdEfS1)oqnn7DDzZmAaTscnsbtYy2jL0g5iSTRUJ1B8DcXPQQCyWhkkzCjoToEPr7Kb016xLZR(zWnvYmgpm4Jz4FUqaVAcsXdXz7j54MGr4Dnm)UnF)qbw9Z9H2Mh(9K9B0YfniHZD0lFVsPCdiHRW2vPF7g)jVOqw)CBCiubG10qJnNuu9P1ZgrmD2OBUBN7eadvVAQgZSh536VY56JwanqAPEua6tpZ5cUcrxVwVcyox2is58WR6sUrF)sroOUQ(427Svb0j)nAoUzMvhXTpCL(0T81WAQ8WDJqOdszRM)2BJH4w6(7NACz2ie83om1sJ7CsxsyvQmk79OdP6j9oM4gY6otTpT5MXwR1o7vsyZU3yT7Vy0f)1FJN7bMFnvFCfp4c9)1SK5kDEld1)c)Vd]] )
 
 spec:RegisterPackSelector( "beast_mastery", "野兽控制", "|T132164:0|t 野兽控制",
     "如果你在|T132164:0|t野兽控制天赋中投入的点数多于其他天赋,将会为你自动选择该优先级。",
