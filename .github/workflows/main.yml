@@ -9,6 +9,8 @@ on:
   push:
     tags:
       - "v*"
+permissions:
+  contents: write
 
 # a workflow is built up as jobs, and within these jobs are steps
 jobs:
@@ -32,8 +34,9 @@ jobs:
 
       # we first have to clone the AddOn project, this is a required step
       - name: Clone Project
-        uses: actions/checkout@v1  # note: checkout@v2 breaks git history, so generating a changelog and
-                                   # file naming for non-tagged builds will not work properly
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # once cloned, we just run the GitHub Action for the packager project
       - name: Package and Release
